@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Template reader
+ * Replace takes an array with k=>v to replace [k] with v
+ */
 class html
 {
     private $_html;
