@@ -2,7 +2,7 @@
     "dataPath": "data",
     "cachePath": "tmp",
     "previews": {
-        "size": 300,
+        "size": 250,
         "format": "jpg",
         "debugOutput": true
     }
