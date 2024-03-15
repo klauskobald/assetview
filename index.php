@@ -1,5 +1,5 @@
 <?php
-require "config.inc.php";
+require "start.inc.php";
 
 $t0 = time();
 
@@ -8,7 +8,11 @@ $status = null;
 $res = null;
 $c = _dispatch();
 if ($c) {
-    header($c->header());
+    $h = $c->header();
+    if ($h) {
+        header($h);
+    }
+
     $c->output();
 }
 exit(0);
@@ -29,8 +33,11 @@ function _dispatch()
     try {
         if (class_exists($cmd)) {
             $c = new $cmd();
-            $c->run($userArgs);
+        } else {
+            $c = new cmd_file();
+            $userArgs = $_SERVER["REQUEST_URI"];
         }
+        $c->run($userArgs);
     } catch (Exception $e) {
         print_r($e);
     }

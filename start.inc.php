@@ -8,7 +8,7 @@ function includeClass($class)
     if (file_exists($f)) {
         require $f;
     } else {
-        echo "invalid class $f";
+        // echo "invalid class $f";
     }
 
 }

@@ -1,0 +1,8 @@
+{
+    "dataPath": "data",
+    "cachePath": "tmp",
+    "previews": {
+        "size": 200,
+        "format": "jpg"
+    }
+}

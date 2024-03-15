@@ -5,13 +5,62 @@ class cmd_list extends cmd_base
 
     protected function process($args)
     {
+        $folders = $this->_collect(config::get("dataPath"));
+        $folderlist = array();
+        foreach ($folders as $folder) {
+            $f = new html("folder");
+            $itemlist = array();
+            foreach ($this->_collect($folder["path"]) as $item) {
+                // print_r($item);
+                $asset = new html("asset");
+                $asset->replace(array(
+                    "ASSETNAME" => $item["name"],
+                    "ASSETLINK" => "/" . $folder["path"] . "/" . $item["name"],
+                    "ASSETTHUMBNAIL" => $this->_thumbnailURL($item),
+                ));
+                $itemlist[] = $asset->get();
+            }
+            $f->replace(array(
+                "FOLDERNAME" => $folder["name"],
+                "ASSETLIST" => join("", $itemlist),
+            ));
+            $folderlist[] = $f->get();
+        }
         $this->html = new html("list");
-        $a = array();
-        $this->html->replace($a);
+        $this->html->replace(array("FOLDERLIST" => join("", $folderlist)));
     }
 
     protected function result()
     {
         return $this->html->get();
+    }
+
+    private function _collect($p)
+    {
+        $r = array();
+        foreach (glob($p . "/*") as $f) {
+            $b = basename($f);
+            if ($b[0] == ".") {
+                continue;
+            }
+
+            $r[] = array("path" => $f, "name" => $b);
+        }
+        return $r;
+    }
+
+    private function _thumbnailURL($item)
+    {
+        $cfg = config::get("previews");
+        $ext = $cfg["format"];
+        $p = config::get("cachePath") . "/" . md5($item["path"] . $cfg["size"]) . "." . $ext;
+        if (!file_exists($p) || filemtime($item["path"]) > filemtime($p)) {
+            switch ($ext) {
+                default:
+                    imageTool::thumbnail($item["path"], $p, $cfg["size"]);
+                    break;
+            }
+        }
+        return "/$p";
     }
 }
