@@ -13,7 +13,7 @@ class imageTool
         $src = escapeshellarg($src);
         $dest = escapeshellarg($dest);
         $e = "convert $src $options $dest";
-        echo "$e\n";
+        // echo "$e\n";
         exec($e, $a);
     }
 

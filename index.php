@@ -1,7 +1,21 @@
 <?php
 require "start.inc.php";
 
-$t0 = time();
+/**
+ * Main router
+ *
+ * typical requests look like this:
+ * http: //localhost:8080/CMD_CLASS/k1=v1/k2=v2/...
+ *
+ * CMD_CLASS is looked up inside classes/cmd example:
+ * http://localhost:8080/list/a=1/b=2/....
+ * -> cmd_list
+ * cmd_list gets then called with the argument array
+ * array(
+ *  "a"=>1,
+ *  "b"=>2,
+ * )
+ */
 
 $err = null;
 $status = null;
@@ -12,7 +26,6 @@ if ($c) {
     if ($h) {
         header($h);
     }
-
     $c->output();
 }
 exit(0);

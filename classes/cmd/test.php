@@ -6,8 +6,9 @@ class cmd_test extends cmd_base
         print_r($args);
     }
 
-    protected function html()
+    protected function result()
     {
 
     }
+
 }

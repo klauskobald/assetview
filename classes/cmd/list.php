@@ -20,8 +20,10 @@ class cmd_list extends cmd_base
                 ));
                 $itemlist[] = $asset->get();
             }
+            $fhp = $folder["path"] . "/_.html";
+            $folderhead = @file_get_contents($fhp);
             $f->replace(array(
-                "FOLDERNAME" => $folder["name"],
+                "FOLDERHEADER" => $folderhead ? $folderhead : "<h3>missing description file: $fhp</h3>",
                 "ASSETLIST" => join("", $itemlist),
             ));
             $folderlist[] = $f->get();
@@ -40,7 +42,7 @@ class cmd_list extends cmd_base
         $r = array();
         foreach (glob($p . "/*") as $f) {
             $b = basename($f);
-            if ($b[0] == ".") {
+            if ($b[0] == "." || $b[0] == "_") {
                 continue;
             }
 
