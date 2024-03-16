@@ -3,7 +3,9 @@
     "cachePath": "tmp",
     "previews": {
         "size": 250,
-        "format": "jpg",
+        "format": {
+            "svg": "png"
+        },
         "debugOutput": true
     }
 }

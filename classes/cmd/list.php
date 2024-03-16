@@ -73,14 +73,21 @@ class cmd_list extends cmd_base
     private function _thumbnail($item)
     {
         $cfg = config::get("previews");
-        $ext = $cfg["format"];
-        $p = config::get("cachePath") . "/" . md5($item["path"] . $cfg["size"]) . "." . $ext;
+        $extSrc = strtolower(pathinfo($item["path"], PATHINFO_EXTENSION));
+        $extDest = @$cfg["format"][$extSrc];
+        if (!$extDest) {
+            $extDest = $extSrc;
+        }
+
+        $p = config::get("cachePath") . "/" . md5($item["path"] . $cfg["size"]) . "." . $extDest;
         if (!file_exists($p) || filemtime($item["path"]) > filemtime($p)) {
             if ($cfg["debugOutput"]) {
                 echo $item["name"] . "<br>";
             }
 
-            switch ($ext) {
+            switch ("{$extSrc}_{$extDest}") {
+                // case "svg_png":
+                //     break;
                 default:
                     $i = imageTool::thumbnail($item["path"], $p, $cfg["size"]);
                     file_put_contents($p . ".info", serialize($i));

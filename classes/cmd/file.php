@@ -17,6 +17,7 @@ class cmd_file extends cmd_base
     public function output()
     {
         if (file_exists($this->path) && is_file($this->path)) {
+            // might not work for everythng ...
             header('Content-Type: application/octet-stream');
             header('Content-Disposition: attachment; filename="' . basename($this->path) . '"');
             readfile($this->path);
