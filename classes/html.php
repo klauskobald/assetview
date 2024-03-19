@@ -7,14 +7,21 @@
 class html
 {
     private $_html;
+    private $_template;
 
     public function __construct($template)
     {
-        $this->_html = file_get_contents("html/$template.html");
+        $this->_template = $template;
+    }
+
+    public function exists()
+    {
+        return file_exists("html/$this->_template.html");
     }
 
     public function replace($lst)
     {
+        $this->_html = file_get_contents("html/$this->_template.html");
         $from = array();
         $to = array();
         foreach ($lst as $k => $v) {

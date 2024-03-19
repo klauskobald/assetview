@@ -6,7 +6,7 @@ class cmd_list extends cmd_base
     protected function process($args)
     {
         new imageTool(); // make sure class is loaded
-
+        $cfg = config::get("asset");
         $folders = $this->_collect(config::get("dataPath"));
         $folderlist = array();
         foreach ($folders as $folder) {
@@ -19,19 +19,27 @@ class cmd_list extends cmd_base
 
             // sort the ones with less height first
             usort($lst, function ($a, $b) {
-                $ra = $a[1]["info"]->height / ($a[1]["info"]->width + 1);
-                $rb = $b[1]["info"]->height / ($b[1]["info"]->width + 1);
-                return $ra > $rb ? 1 : -1;
-
+                if ($a[1]["info"] && $b[1]["info"]) {
+                    $ra = $a[1]["info"]->height / ($a[1]["info"]->width + 1);
+                    $rb = $b[1]["info"]->height / ($b[1]["info"]->width + 1);
+                    return $ra > $rb ? 1 : -1;
+                }
+                return 1;
             });
 
             $itemlist = array();
             foreach ($lst as $it) {
                 list($item, $thumb) = $it;
                 // print_r($item);
-                $asset = new html("asset");
+                $ext = pathinfo($item["path"], PATHINFO_EXTENSION);
+                $assetType = @$cfg[$ext];
+                $asset = new html($assetType ? "asset_$assetType" : "asset");
+
                 $imgInfo = $thumb["info"];
-                $infostr = $imgInfo->isValid ? sprintf("%s %d x %d", $imgInfo->type, $imgInfo->width, $imgInfo->height) : "";
+                $infostr = "";
+                if ($imgInfo) {
+                    $infostr = $imgInfo->isValid ? sprintf("%s %d x %d", $imgInfo->type, $imgInfo->width, $imgInfo->height) : "";
+                }
                 $asset->replace(array(
                     "ASSETNAME" => $item["name"],
                     "ASSETLINK" => "/" . $folder["path"] . "/" . $item["name"],
@@ -78,23 +86,29 @@ class cmd_list extends cmd_base
         if (!$extDest) {
             $extDest = $extSrc;
         }
-
-        $p = config::get("cachePath") . "/" . md5($item["path"] . $cfg["size"]) . "." . $extDest;
-        if (!file_exists($p) || filemtime($item["path"]) > filemtime($p)) {
+        $srcPath = $item["path"];
+        $p = config::get("cachePath") . "/" . md5($srcPath . $cfg["size"]) . "." . $extDest;
+        if (!file_exists($p) || filemtime($srcPath) > filemtime($p)) {
             if ($cfg["debugOutput"]) {
-                echo $item["name"] . "<br>";
+                echo $srcPath . "<br>";
             }
 
             switch ("{$extSrc}_{$extDest}") {
                 // case "svg_png":
                 //     break;
+                case "svg_svg":
+                    copy($srcPath, $p);
+                    break;
+                    $i = null;
                 default:
-                    $i = imageTool::thumbnail($item["path"], $p, $cfg["size"]);
-                    file_put_contents($p . ".info", serialize($i));
+                    $i = imageTool::thumbnail($srcPath, $p, $cfg["size"]);
+
                     break;
             }
+            file_put_contents($p . ".info", serialize($i));
+
         }
-        $i = unserialize(file_get_contents($p . ".info"));
+        $i = @unserialize(file_get_contents($p . ".info"));
 
         return array("url" => "/$p", "info" => $i);
     }

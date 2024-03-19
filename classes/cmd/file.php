@@ -17,9 +17,17 @@ class cmd_file extends cmd_base
     public function output()
     {
         if (file_exists($this->path) && is_file($this->path)) {
-            // might not work for everythng ...
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="' . basename($this->path) . '"');
+            $ext = strtolower(pathinfo($this->path, PATHINFO_EXTENSION));
+            switch ($ext) {
+                case "svg":
+                    header('Content-Type: image/svg+xml');
+                    break;
+                default:
+                    header('Content-Type: application/octet-stream');
+                    header('Content-Disposition: attachment; filename="' . basename($this->path) . '"');
+                    break;
+            }
+
             readfile($this->path);
         } else {
             echo "file not found $this->path";

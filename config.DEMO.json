@@ -1,11 +1,14 @@
 {
     "dataPath": "data.DEMO",
     "cachePath": "tmp",
+    "imagemagick": "convert",
     "previews": {
-        "size": 250,
-        "format": {
-            "svg": "png"
-        },
+        "size": 300,
+        "format": {},
         "debugOutput": true
+    },
+    "asset": {
+        "mp4": "mov",
+        "mov": "mov"
     }
 }
