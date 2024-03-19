@@ -21,6 +21,8 @@ class cmd_file extends cmd_base
             switch ($ext) {
                 case "svg":
                     header('Content-Type: image/svg+xml');
+                    header('Content-Disposition: attachment; filename="' . basename($this->path) . '"');
+
                     break;
                 default:
                     header('Content-Type: application/octet-stream');
