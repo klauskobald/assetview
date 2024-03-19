@@ -1,5 +1,6 @@
 <?php
 require "start.inc.php";
+const DefaultRoute = "list";
 
 /**
  * Main router
@@ -17,9 +18,6 @@ require "start.inc.php";
  * )
  */
 
-$err = null;
-$status = null;
-$res = null;
 $c = _dispatch();
 if ($c) {
     $h = $c->header();
@@ -36,7 +34,12 @@ function _dispatch()
     while (!$a[0] && count($a) > 1) {
         array_shift($a);
     }
-    $cmd = "cmd_" . array_shift($a);
+
+    $cmd = array_shift($a);
+    if (!$cmd) {
+        $cmd = DefaultRoute;
+    }
+
     $userArgs = array();
     foreach ($a as $arg) {
         @list($k, $v) = explode("=", $arg);
@@ -44,8 +47,9 @@ function _dispatch()
     }
     $c = null;
     try {
-        if (class_exists($cmd)) {
-            $c = new $cmd();
+        $class = "cmd_" . $cmd;
+        if (class_exists($class)) {
+            $c = new $class();
         } else {
             $c = new cmd_file();
             $userArgs = $_SERVER["REQUEST_URI"];
