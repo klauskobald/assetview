@@ -92,7 +92,7 @@ class cmd_list extends cmd_base
             if ($cfg["debugOutput"]) {
                 echo $srcPath . "<br>";
             }
-
+            $i = null;
             switch ("{$extSrc}_{$extDest}") {
                 // case "svg_png":
                 //     break;
