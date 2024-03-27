@@ -5,7 +5,6 @@ class cmd_list extends cmd_base
 
     protected function process($args)
     {
-        new imageTool(); // make sure class is loaded
         $cfg = config::get("asset");
         $folders = $this->_collect(config::get("dataPath"));
         $folderlist = array();
@@ -94,8 +93,10 @@ class cmd_list extends cmd_base
             }
             $i = null;
             switch ("{$extSrc}_{$extDest}") {
-                // case "svg_png":
-                //     break;
+                case "mp4_mp4":
+                case "mov_mp4":
+                    $i = movieTool::thumbnail($srcPath, $p, $cfg["size"]);
+                    break;
                 case "svg_svg":
                     copy($srcPath, $p);
                     break;
