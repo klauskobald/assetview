@@ -24,6 +24,13 @@ class cmd_file extends cmd_base
                     header('Content-Disposition: attachment; filename="' . basename($this->path) . '"');
 
                     break;
+                case "mov":
+                case "mpg":
+                case "mp4":
+                    header('Content-Type: video/' . $ext);
+                    header('Content-Length:' . filesize($this->path));
+                    header('Content-Description: attachment; filename=' . basename($this->path));
+                    break;
                 default:
                     header('Content-Type: application/octet-stream');
                     header('Content-Disposition: attachment; filename="' . basename($this->path) . '"');

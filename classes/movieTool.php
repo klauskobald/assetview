@@ -6,7 +6,7 @@ class movieTool
     public static function thumbnail($src, $dest, $size): imageDescription
     {
         // ffmpeg -i avax_rn_2.mp4 -vf "scale=-2:100"  avax_rn_2c.mp4
-        self::_execFFMpeg($src, $dest, "-vf \"scale=$size:-2\"");
+        self::_execFFMpeg($src, $dest, "-vf \"scale=$size:-2\" -movflags faststart");
         return self::_execFFprobe($src, "-v error -select_streams v -show_entries stream=width,height -of csv=p=0:s=x");
     }
 

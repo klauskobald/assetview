@@ -1,10 +1,11 @@
 <?php
 class cmd_list extends cmd_base
 {
-    private $html;
+    private $html, $clearcache = false;
 
     protected function process($args)
     {
+
         $cfg = config::get("asset");
         $folders = $this->_collect(config::get("dataPath"));
         $folderlist = array();
@@ -57,6 +58,11 @@ class cmd_list extends cmd_base
         }
         $this->html = new html("list");
         $this->html->replace(array("FOLDERLIST" => join("", $folderlist)));
+
+        if ($this->clearcache) {
+            $cp = config::get("cachePath") . "/" . config::get("zipFile");
+            @unlink($cp);
+        }
     }
 
     protected function result()
@@ -88,6 +94,7 @@ class cmd_list extends cmd_base
         $srcPath = $item["path"];
         $p = config::get("cachePath") . "/" . md5($srcPath . $cfg["size"]) . "." . $extDest;
         if (!file_exists($p) || filemtime($srcPath) > filemtime($p)) {
+            $this->clearcache = true;
             if ($cfg["debugOutput"]) {
                 echo $srcPath . "<br>";
             }
